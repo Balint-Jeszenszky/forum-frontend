@@ -1,26 +1,36 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { useState } from 'react';
+import { Switch, Route } from 'react-router-dom';
 import './App.css';
+import { Category } from './models/Category';
+import AnswerPage from './pages/AnswerPage';
+import CategoryPage from './pages/CategoryPage';
+import Navbar from './pages/common/Navbar';
+import MainPage from './pages/MainPage';
+import QuestionPage from './pages/QuestionPage';
+import service from './service/ForumService';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+const App: React.FC = () => {
+    const [categories, setCategories] = useState<Category[]>(service.getCategories());
+
+    return (
+        <>
+            <Navbar categories={categories} />
+            <Switch>
+                <Route exact path='/question/:id'>
+                    <QuestionPage />
+                </Route>
+                <Route exact path='/answer/:id'>
+                    <AnswerPage />
+                </Route>
+                <Route exact path='/category/:id'>
+                    <CategoryPage categories={categories} />
+                </Route>
+                <Route path='/'>
+                    <MainPage />
+                </Route>
+            </Switch>
+        </>
+    );
 }
 
 export default App;
