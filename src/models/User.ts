@@ -1,7 +1,7 @@
-export interface Question {
-    id: number;
-    name: string;
+export interface User {
+    id?: number;
+    username: string;
     email: string;
     password?: string;
-    role: string;
+    role?: string;
 }

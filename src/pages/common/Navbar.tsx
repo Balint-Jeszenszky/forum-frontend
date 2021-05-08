@@ -45,7 +45,7 @@ const Navbar: React.FC<INavbar> = props => {
 
                     <ul className="navbar-nav ml-auto">
                         {categories}
-                        <Link to='/categories' className="nav-link" onClick={closeNavbar}>
+                        <Link to='/login' className="nav-link" onClick={closeNavbar}>
                             Login
                         </Link>
                     </ul>

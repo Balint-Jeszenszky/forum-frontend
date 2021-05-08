@@ -5,3 +5,9 @@ export interface Answer {
     time: Date;
     text: string;
 }
+
+export interface NewAnswer {
+    userId: number;
+    questionId: number;
+    text: string;
+}

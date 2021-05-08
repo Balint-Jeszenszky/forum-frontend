@@ -7,7 +7,7 @@ const MainPage: React.FC = () => {
     return (
         <div className='container'>
             <h1>Newest questions</h1>
-            {service.getNewestQuestions().map(e => (<QuestionTitle question={e} />))}
+            {service.getNewestQuestions().map(e => (<QuestionTitle question={e} key={`q-${e.id}`} />))}
         </div>
     );
 }
