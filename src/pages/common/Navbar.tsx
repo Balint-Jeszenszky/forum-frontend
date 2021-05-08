@@ -1,12 +1,14 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { Category } from '../../models/Category';
+import { UserContext } from './UserContext';
 
 interface INavbar {
     categories: Category[];
 }
 
 const Navbar: React.FC<INavbar> = props => {
+    const userCtx = useContext(UserContext);
 
     const closeNavbar = () => { if (window.innerWidth < 992) (document.querySelector(".navbar-toggler") as HTMLElement).click() }
 
@@ -44,10 +46,13 @@ const Navbar: React.FC<INavbar> = props => {
 
 
                     <ul className="navbar-nav ml-auto">
+                        {userCtx.roles?.find(e => e === 'ROLE_ADMIN') && <Link to='/admin' className="nav-link" onClick={closeNavbar}>Admin</Link>}
+                        {userCtx.id && <Link to='/profile' className="nav-link" onClick={closeNavbar}>Profile</Link>}
                         {categories}
-                        <Link to='/login' className="nav-link" onClick={closeNavbar}>
-                            Login
-                        </Link>
+                        {userCtx.id ? 
+                            <Link to='/logout' className="nav-link" onClick={closeNavbar}>Log out</Link>
+                            : <Link to='/login' className="nav-link" onClick={closeNavbar}>Log in</Link>
+                        }
                     </ul>
                 </div>
             </div>

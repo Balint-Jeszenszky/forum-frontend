@@ -1,0 +1,1 @@
+export enum LoadingState { START, LOADING, LOADED }

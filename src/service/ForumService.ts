@@ -1,49 +1,52 @@
 import axios from 'axios';
-import { Question } from '../models/Question';
+import { NewQuestion, Question } from '../models/Question';
 import { Category } from '../models/Category';
-import { User } from '../models/User';
+import { Login, User } from '../models/User';
 import { Answer, NewAnswer } from '../models/Answer';
 
 class ForumService {
     baseUrl = 'http://192.168.0.2:8080/api';
 
+    private getHeader(userCtx: Login) {
+        return {
+            headers: {
+                Authorization: `Bearer ${userCtx.token}`
+            }
+        }
+    }
+
     getAnswersByQuestionId(id: number) {
         return axios.get(`${this.baseUrl}/answers/${id}`);
     }
 
-    getAnswerById(id: number) {}
-
-    postAnswer(answer: NewAnswer) {
-        return axios.post(`${this.baseUrl}/answers/answer`, answer);
+    getAnswerById(id: number, userCtx: Login) {
+        return axios.get(`${this.baseUrl}/answers/answer/${id}`, this.getHeader(userCtx));
     }
 
-    putAnswer(answer: Answer) {}
+    postAnswer(answer: NewAnswer, userCtx: Login) {
+        return axios.post(`${this.baseUrl}/answers/answer`, answer, this.getHeader(userCtx));
+    }
 
-    deleteAnswerById(id: number) {}
+    putAnswer(answer: Answer, userCtx: Login) {
+        return axios.put(`${this.baseUrl}/answers/answer`, answer, this.getHeader(userCtx));
+    }
+
+    deleteAnswerById(id: number) {} // TODO ADMIN
 
     getCategories() {
         return axios.get(`${this.baseUrl}/categories`);
     }
 
-    getCategoryById(id: number) {}
+    getCategoryById(id: number) {} // TODO ADMIN
 
-    postCategory(category: Category) {}
+    postCategory(category: Category) {} // TODO ADMIN
 
-    putCategory(category: Category) {}
+    putCategory(category: Category) {} // TODO ADMIN
 
-    deleteCategoryById(id: number) {}
+    deleteCategoryById(id: number) {} // TODO ADMIN
 
-    getNewestQuestions(): Question[] {
-        return [
-            {   
-                id: 1,
-                userId: 1,
-                categoryId: 1,
-                title: 'new question',
-                description: 'what',
-                time: new Date()
-            }
-        ];
+    getNewestQuestions() {
+        return axios.get(`${this.baseUrl}/questions/newest`);
     }
 
     getQuestionsByCategoryId(id: number) {
@@ -51,24 +54,32 @@ class ForumService {
     }
 
     getQuestionById(id: number) {
-        return axios.get(`${this.baseUrl}/questions/question/${id}`)
+        return axios.get(`${this.baseUrl}/questions/question/${id}`);
     }
 
-    postQuestion(question: Question) {}
-
-    putQuestion(question: Question) {}
-
-    deleteQuestionById(id: number) {}
-
-    getUserById(id: number) {}
-
-    postUser(user: User) {
-        return axios.post(`${this.baseUrl}/users`, user);
+    postQuestion(question: NewQuestion, userCtx: Login) {
+        return axios.post(`${this.baseUrl}/questions/question`, question, this.getHeader(userCtx));
     }
 
-    putUser(user: User) {}
+    putQuestion(question: NewQuestion, userCtx: Login) {
+        return axios.put(`${this.baseUrl}/questions/question`, question, this.getHeader(userCtx));
+    }
 
-    deleteUserById(id: number) {}
+    deleteQuestionById(id: number) {} // TODO ADMIN
+
+    getUserById(id: number) {} // TODO
+
+    registerUser(user: User) {
+        return axios.post(`${this.baseUrl}/auth/register`, user);
+    }
+
+    putUser(user: User) {} // TODO
+
+    deleteUserById(id: number) {} // TODO
+
+    login(username: string, password: string) {
+        return axios.post(`${this.baseUrl}/auth/login`, {username, password});
+    }
 }
 
 const service = new ForumService();

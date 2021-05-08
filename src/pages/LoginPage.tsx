@@ -1,27 +1,46 @@
 import React, { useState } from 'react';
-import QuestionTitle from './common/QuestionTitle';
+import { Login } from '../models/User';
 import service from '../service/ForumService';
 
-const LoginPage: React.FC = () => {
-    const [email, setEmail] = useState<string>('');
+interface ILoginPage {
+    setUserCtx(userCtx: Login): void;
+}
+
+const LoginPage: React.FC<ILoginPage> = props => {
+    const [username, setUsername] = useState<string>('');
     const [password, setPassword] = useState<string>('');
     const [wrongCredentials, setWrongCredentials] = useState<boolean>(false);
     const [regEmail, setRegEmail] = useState<string>('');
-    const [username, setUsername] = useState<string>('');
+    const [regUsername, setRegUsername] = useState<string>('');
     const [regPassword, setregPassword] = useState<string>('');
     const [success, setSuccess] = useState<boolean>(false);
 
     const login = () => {
-
+        service.login(username, password)
+        .then(res => {
+            const userCtx = {
+                id: res.data.id,
+                token: res.data.token,
+                roles: res.data.roles
+            }
+            localStorage.setItem('userCtx', JSON.stringify(userCtx));
+            props.setUserCtx(userCtx);
+        })
+        .catch(res => {
+            setWrongCredentials(true);
+        });
     }
 
     const register = () => {
-        service.postUser({
-            username,
+        service.registerUser({
+            username: regUsername,
             email: regEmail,
             password: regPassword
         })
         .then(res => {
+            setRegEmail('');
+            setRegUsername('');
+            setregPassword('');
             setSuccess(true);
         })
     }
@@ -34,7 +53,7 @@ const LoginPage: React.FC = () => {
                     {wrongCredentials && <p className="text-danger text-center">Wrong credentials</p>}
                     <form>
                         <div className="form-group">
-                            <input type="text" className="form-control" placeholder="Username" onChange={e => setEmail(e.target.value)} value={email} />
+                            <input type="text" className="form-control" placeholder="Username" onChange={e => setUsername(e.target.value)} value={username} />
                         </div>
                         <div className="form-group">
                             <input type="password" className="form-control" placeholder="Password" onChange={e => setPassword(e.target.value)} value={password} />
@@ -52,7 +71,7 @@ const LoginPage: React.FC = () => {
                             <input type="email" className="form-control" placeholder="Email" onChange={e => setRegEmail(e.target.value)} value={regEmail} />
                         </div>
                         <div className="form-group">
-                            <input type="text" className="form-control" placeholder="Name" onChange={e => setUsername(e.target.value)} value={username} />
+                            <input type="text" className="form-control" placeholder="Name" onChange={e => setRegUsername(e.target.value)} value={regUsername} />
                         </div>
                         <div className="form-group">
                             <input type="password" className="form-control" placeholder="Password" onChange={e => setregPassword(e.target.value)} value={regPassword} />

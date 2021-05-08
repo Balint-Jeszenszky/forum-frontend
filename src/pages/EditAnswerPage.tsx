@@ -5,31 +5,39 @@ import { useHistory, useParams } from 'react-router-dom';
 import { LoadingState } from '../models/LoadingState';
 import { UserContext } from './common/UserContext';
 
-const AnswerPage: React.FC = () => {
+const EditAnswerPage: React.FC = () => {
     const [load, setLoad] = useState<LoadingState>(LoadingState.START);
     const [answer, setAnswer] = useState<string>('');
     const [question, setQuestion] = useState<Question>();
-    const params: {id: string} = useParams();
-    const id = parseInt(params.id);
+    const params: {aId: string, qId: string} = useParams();
+    const aId = parseInt(params.aId);
+    const qId = parseInt(params.qId);
     const history = useHistory();
     const userCtx = useContext(UserContext);
     
     if (load === LoadingState.START) {
         setLoad(LoadingState.LOADING);
-        service.getQuestionById(id)
+        service.getQuestionById(qId)
         .then(res => {
             setQuestion(res.data);
-            setLoad(LoadingState.LOADED);
+
+            service.getAnswerById(aId, userCtx)
+            .then(res => {
+                setAnswer(res.data.text);
+                setLoad(LoadingState.LOADED);
+            });
         });
     }
 
-    const sendAnswer = () => {
-        service.postAnswer({
-            questionId: id,
+    const updateAnswer = () => {
+        service.putAnswer({
+            id: aId,
+            questionId: qId,
             text: answer,
-            userId: userCtx.id!
+            userId: userCtx.id!,
+            time: new Date()
         }, userCtx)
-        .then(res => history.push(`/question/${id}`));
+        .then(res => history.push(`/question/${qId}`));
     }
 
     return (
@@ -41,10 +49,10 @@ const AnswerPage: React.FC = () => {
 
             <textarea className='form-control p-3 mt-3' onChange={e => setAnswer(e.target.value)} value={answer}></textarea>
 
-            <button className='mt-3 btn btn-primary' onClick={sendAnswer}>Post answer</button>
+            <button className='mt-3 btn btn-primary' onClick={updateAnswer}>Update answer</button>
         </div>
     );
     
 }
 
-export default AnswerPage;
+export default EditAnswerPage;
