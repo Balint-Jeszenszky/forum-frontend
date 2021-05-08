@@ -1,9 +1,14 @@
+interface Role {
+    id: number;
+    name: "ROLE_USER" | "ROLE_ADMIN";
+}
+
 export interface User {
     id?: number;
     username: string;
     email: string;
     password?: string;
-    role?: string;
+    roles?: Role[];
 }
 
 export interface Login {

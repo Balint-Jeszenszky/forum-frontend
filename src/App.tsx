@@ -4,6 +4,7 @@ import './App.css';
 import { Category } from './models/Category';
 import { LoadingState } from './models/LoadingState';
 import { Login } from './models/User';
+import AdminPage from './pages/AdminPage';
 import AnswerPage from './pages/AnswerPage';
 import CategoryPage from './pages/CategoryPage';
 import Logout from './pages/common/Logout';
@@ -70,6 +71,9 @@ const App: React.FC = () => {
                 </Route>
                 <Route exact path='/profile'>
                     <ProfilePage />
+                </Route>
+                <Route exact path='/admin'>
+                    <AdminPage />
                 </Route>
                 <Route path='/'>
                     <Redirect to='/' />

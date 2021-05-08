@@ -1,6 +1,6 @@
 import axios from 'axios';
-import { NewQuestion, Question } from '../models/Question';
-import { Category } from '../models/Category';
+import { NewQuestion } from '../models/Question';
+import { Category, NewCategory } from '../models/Category';
 import { Login, User } from '../models/User';
 import { Answer, NewAnswer } from '../models/Answer';
 
@@ -31,19 +31,25 @@ class ForumService {
         return axios.put(`${this.baseUrl}/answers/answer`, answer, this.getHeader(userCtx));
     }
 
-    deleteAnswerById(id: number) {} // TODO ADMIN
+    deleteAnswerById(id: number, userCtx: Login) {
+        return axios.delete(`${this.baseUrl}/answers/answer/${id}`, this.getHeader(userCtx));
+    }
 
     getCategories() {
         return axios.get(`${this.baseUrl}/categories`);
     }
 
-    getCategoryById(id: number) {} // TODO ADMIN
+    postCategory(category: NewCategory, userCtx: Login) {
+        return axios.post(`${this.baseUrl}/categories`, category, this.getHeader(userCtx));
+    }
 
-    postCategory(category: Category) {} // TODO ADMIN
+    putCategory(category: Category, userCtx: Login) {
+        return axios.put(`${this.baseUrl}/categories`, category, this.getHeader(userCtx));
+    }
 
-    putCategory(category: Category) {} // TODO ADMIN
-
-    deleteCategoryById(id: number) {} // TODO ADMIN
+    deleteCategoryById(id: number, userCtx: Login) {
+        return axios.delete(`${this.baseUrl}/categories/${id}`, this.getHeader(userCtx));
+    }
 
     getNewestQuestions() {
         return axios.get(`${this.baseUrl}/questions/newest`);
@@ -65,9 +71,17 @@ class ForumService {
         return axios.put(`${this.baseUrl}/questions/question`, question, this.getHeader(userCtx));
     }
 
-    deleteQuestionById(id: number) {} // TODO ADMIN
+    deleteQuestionById(id: number, userCtx: Login) {
+        return axios.delete(`${this.baseUrl}/questions/question/${id}`, this.getHeader(userCtx));
+    }
 
-    getUserById(id: number) {} // TODO
+    getAllUsers(userCtx: Login) {
+        return axios.get(`${this.baseUrl}/users`, this.getHeader(userCtx));
+    }
+
+    getUserById(id: number, userCtx: Login) {
+        return axios.get(`${this.baseUrl}/users/${id}`, this.getHeader(userCtx));
+    }
 
     registerUser(user: User) {
         return axios.post(`${this.baseUrl}/auth/register`, user);
@@ -75,7 +89,9 @@ class ForumService {
 
     putUser(user: User) {} // TODO
 
-    deleteUserById(id: number) {} // TODO
+    deleteUserById(id: number, userCtx: Login) {
+        return axios.delete(`${this.baseUrl}/users/${id}`, this.getHeader(userCtx));
+    }
 
     login(username: string, password: string) {
         return axios.post(`${this.baseUrl}/auth/login`, {username, password});
