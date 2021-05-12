@@ -1,3 +1,10 @@
+# React frontend made for BME AUT Java-based Web Frameworks homework
+
+Backend: https://github.com/Balint-Jeszenszky/java-web-forum
+
+Build, run etc. see below:
+
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
