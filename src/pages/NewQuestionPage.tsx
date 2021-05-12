@@ -6,6 +6,7 @@ import { UserContext } from './common/UserContext';
 const NewQuestionPage: React.FC = () => {
     const [title, setTitle] = useState<string>('');
     const [description, setDescription] = useState<string>('');
+    const [error, setError] = useState<string>('');
     const params: {id: string} = useParams();
     const id = parseInt(params.id);
     const history = useHistory();
@@ -19,12 +20,18 @@ const NewQuestionPage: React.FC = () => {
             description
         }, userCtx).then(res => {
             history.push(`/question/${res.data.id}`);
+        })
+        .catch(err => {
+            setError(err.response.data);
         });
     }
 
     return (
         <div className='container'>
             <h1>New question</h1>
+            {error && <div className="alert alert-danger" role="alert">
+                {error}
+            </div>}
             <label htmlFor='title'>Title:</label>
             <input className='form-control mb-3' id='title' type='text' onChange={e => setTitle(e.target.value)} value={title} />
             <label htmlFor='question'>Question:</label>

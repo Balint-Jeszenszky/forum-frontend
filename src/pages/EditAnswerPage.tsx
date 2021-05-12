@@ -9,6 +9,7 @@ const EditAnswerPage: React.FC = () => {
     const [load, setLoad] = useState<LoadingState>(LoadingState.START);
     const [answer, setAnswer] = useState<string>('');
     const [question, setQuestion] = useState<Question>();
+    const [error, setError] = useState<string>('');
     const params: {aId: string, qId: string} = useParams();
     const aId = parseInt(params.aId);
     const qId = parseInt(params.qId);
@@ -39,12 +40,19 @@ const EditAnswerPage: React.FC = () => {
             userId: userCtx.id!,
             time: new Date()
         }, userCtx)
-        .then(res => history.push(`/question/${qId}`));
+        .then(res => history.push(`/question/${qId}`))
+        .catch(err => {
+            setError(err.response.data);
+        });
     }
 
     return (
-        <div className='container'>
-            <div className='p-3 mt-3 bg-light border border-secondary'>
+        <div className='container mt-3'>
+            {error && <div className="alert alert-danger" role="alert">
+                {error}
+            </div>}
+
+            <div className='p-3 bg-light border border-secondary'>
                 <h1>{question?.title}</h1>
                 <p>{question?.description}</p>
             </div>

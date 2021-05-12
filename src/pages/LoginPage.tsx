@@ -13,6 +13,7 @@ const LoginPage: React.FC<ILoginPage> = props => {
     const [regEmail, setRegEmail] = useState<string>('');
     const [regUsername, setRegUsername] = useState<string>('');
     const [regPassword, setregPassword] = useState<string>('');
+    const [regErr, setRegErr] = useState<string>('');
     const [success, setSuccess] = useState<boolean>(false);
 
     const login = () => {
@@ -43,6 +44,9 @@ const LoginPage: React.FC<ILoginPage> = props => {
             setregPassword('');
             setSuccess(true);
         })
+        .catch(err => {
+            setRegErr(err.response.data);
+        });
     }
 
     return (
@@ -67,6 +71,7 @@ const LoginPage: React.FC<ILoginPage> = props => {
                     <h1 className="text-center">Register</h1>
                     {success && <p className="text-success text-center">Successful registration</p>}
                     <form>
+                        {regErr && <p className="text-danger text-center">{regErr}</p>}
                         <div className="form-group">
                             <input type="email" className="form-control" placeholder="Email" onChange={e => setRegEmail(e.target.value)} value={regEmail} />
                         </div>

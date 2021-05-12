@@ -15,6 +15,7 @@ const UserManager: React.FC = () => {
         service.getAllUsers(userCtx)
         .then(res => {
             setUsers(res.data.filter((e: User) => !e.roles?.find(e => e.name === 'ROLE_ADMIN')));
+            console.log(res.data);
         });
     }
 
