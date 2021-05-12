@@ -11,6 +11,14 @@ export interface User {
     roles?: Role[];
 }
 
+export interface EditUser {
+    id: number;
+    email: string;
+    oldPassword: string;
+    newPassword: string;
+    confirmPassword: string;
+}
+
 export interface Login {
     token?: String;
     id?:  number;

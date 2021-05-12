@@ -17,18 +17,20 @@ const QuestionPage: React.FC = () => {
 
     if (load === LoadingState.START) {
         setLoad(LoadingState.LOADING);
-        service.getQuestionById(id)
+        const questionLoad = service.getQuestionById(id)
         .then(res => {
             const data = res.data;
             data.time = new Date(data.time);
             setQuestion(res.data);
-
-            service.getAnswersByQuestionId(id)
-            .then(res => {
-                setAnswers(res.data.map((e: Answer) => {e.time = new Date(e.time); return e}));
-                setLoad(LoadingState.LOADED);
-            });
         });
+
+        const answersLoad = service.getAnswersByQuestionId(id)
+        .then(res => {
+            setAnswers(res.data.map((e: Answer) => {e.time = new Date(e.time); return e}));
+        });
+
+        Promise.all([questionLoad, answersLoad])
+        .then(() => setLoad(LoadingState.LOADED));
     }
 
     const deleteQuestion = () => {

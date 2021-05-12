@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { NewQuestion } from '../models/Question';
 import { Category, NewCategory } from '../models/Category';
-import { Login, User } from '../models/User';
+import { EditUser, Login, User } from '../models/User';
 import { Answer, NewAnswer } from '../models/Answer';
 
 class ForumService {
@@ -56,11 +56,19 @@ class ForumService {
     }
 
     getQuestionsByCategoryId(id: number) {
-        return axios.get(`${this.baseUrl}/questions/${id}`);
+        return axios.get(`${this.baseUrl}/questions/category/${id}`);
     }
 
     getQuestionById(id: number) {
         return axios.get(`${this.baseUrl}/questions/question/${id}`);
+    }
+
+    getQuestionByUserId(id: number, userCtx: Login) {
+        return axios.get(`${this.baseUrl}/questions/user/${id}`, this.getHeader(userCtx));
+    }
+
+    getAnsweredQuestionsByUserId(id: number, userCtx: Login) {
+        return axios.get(`${this.baseUrl}/questions/answeredby/${id}`, this.getHeader(userCtx));
     }
 
     postQuestion(question: NewQuestion, userCtx: Login) {
@@ -87,7 +95,9 @@ class ForumService {
         return axios.post(`${this.baseUrl}/auth/register`, user);
     }
 
-    putUser(user: User) {} // TODO
+    putUser(user: EditUser, userCtx: Login) {
+        return axios.put(`${this.baseUrl}/users`, user, this.getHeader(userCtx));
+    }
 
     deleteUserById(id: number, userCtx: Login) {
         return axios.delete(`${this.baseUrl}/users/${id}`, this.getHeader(userCtx));

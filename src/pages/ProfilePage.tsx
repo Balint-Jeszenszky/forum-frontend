@@ -1,40 +1,39 @@
 import React, { useContext, useState } from 'react';
-import { useHistory } from 'react-router';
+import { Link } from 'react-router-dom';
 import { LoadingState } from '../models/LoadingState';
+import { Question } from '../models/Question';
 import { User } from '../models/User';
 import service from '../service/ForumService';
+import QuestionTitle from './common/QuestionTitle';
 import { UserContext } from './common/UserContext';
 
 const ProfilePage: React.FC = () => {
     const [load, setLoad] = useState<LoadingState>(LoadingState.START);
     const [user, setUser] = useState<User>();
-    const [editing, setEditing] = useState<boolean>(false);
+    const [questions, setQuestions] = useState<Question[]>([]);
+    const [answered, setAnswered] = useState<Question[]>([]);
     const userCtx = useContext(UserContext);
-    const history = useHistory();
 
     if (load === LoadingState.START) {
         setLoad(LoadingState.LOADING);
-        service.getUserById(userCtx.id!, userCtx)
+
+        const userLoad = service.getUserById(userCtx.id!, userCtx)
         .then(res => {
-            const data = res.data;
-            data.time = new Date(data.time);
             setUser(res.data);
         });
-    }
 
-    const deleteProfile = () => {
-        if (window.confirm('Delete your profile?')) {
-            service.deleteUserById(userCtx.id!, userCtx)
-            .then(res => {
-                localStorage.removeItem('userCtx');
-                history.push('/logout');
-            });
-        }
-    }
+        const questionsLoad = service.getQuestionByUserId(userCtx.id!, userCtx)
+        .then(res => {
+            setQuestions(res.data);
+        });
 
-    const edit = () => {
-        setEditing(true);
+        const answeredLoad = service.getAnsweredQuestionsByUserId(userCtx.id!, userCtx)
+        .then(res => {
+            setAnswered(res.data);
+        });
 
+        Promise.all([userLoad, questionsLoad, answeredLoad])
+        .then(() => setLoad(LoadingState.LOADED));
     }
 
     return (
@@ -47,34 +46,25 @@ const ProfilePage: React.FC = () => {
                             <p>Username:</p>
                             <p>Email:</p>
                         </div>
-                        {!editing && <div className='col-6'>
+                        <div className='col-6'>
                             <p>{user?.username}</p>
                             <p>{user?.email}</p>
-                        </div>}
-                        {editing && <div className='col-6'>
-                            <p>{user?.username}</p>
-                            <input type="text" className='form-control form-control-sm' />
-                        </div>}
+                        </div>
                     </div>
-                    {!editing && <div className='text-center'>
-                        <button className='btn btn-primary' onClick={edit}>Edit</button>
-                    </div>}
-                    {editing && <div className='text-center'>
-                        <button className='btn btn-primary'>Save</button>
-                        <button className='btn btn-secondary mx-1' onClick={() => setEditing(false)}>Cancel</button>
-                        {!userCtx.roles?.find(e => e === 'ROLE_ADMIN') && <button className='btn btn-danger' onClick={deleteProfile}>Delete profile</button>}
-                    </div>}
+                    <div className='text-center'>
+                        <Link to='/profile/edit' className='btn btn-primary'>Edit</Link>
+                    </div>
                 </div>
                 
                 <div className='col-12 col-md-6'>
                     <h1 className='text-center'>Your questions:</h1>
                     <div>
-                        
+                        {questions.map(e => (<QuestionTitle question={e} key={`q-${e.id}`}></QuestionTitle>))}
                     </div>
 
                     <h1 className='text-center'>Questions answered:</h1>
                     <div>
-                        
+                        {answered.map(e => (<QuestionTitle question={e} key={`a-${e.id}`}></QuestionTitle>))}
                     </div>
                 </div>
             </div>

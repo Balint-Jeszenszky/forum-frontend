@@ -17,16 +17,18 @@ const EditAnswerPage: React.FC = () => {
     
     if (load === LoadingState.START) {
         setLoad(LoadingState.LOADING);
-        service.getQuestionById(qId)
+        const questionLoad = service.getQuestionById(qId)
         .then(res => {
             setQuestion(res.data);
-
-            service.getAnswerById(aId, userCtx)
-            .then(res => {
-                setAnswer(res.data.text);
-                setLoad(LoadingState.LOADED);
-            });
         });
+
+        const answerLoad = service.getAnswerById(aId, userCtx)
+        .then(res => {
+            setAnswer(res.data.text);
+        });
+        
+        Promise.all([questionLoad, answerLoad])
+        .then(() => setLoad(LoadingState.LOADED));
     }
 
     const updateAnswer = () => {

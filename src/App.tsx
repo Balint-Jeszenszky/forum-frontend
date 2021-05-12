@@ -11,6 +11,7 @@ import Logout from './pages/common/Logout';
 import Navbar from './pages/common/Navbar';
 import { UserContext } from './pages/common/UserContext';
 import EditAnswerPage from './pages/EditAnswerPage';
+import EditProfilePage from './pages/EditProfilePage';
 import EditQuestionPage from './pages/EditQuestionPage';
 import LoginPage from './pages/LoginPage';
 import MainPage from './pages/MainPage';
@@ -71,6 +72,9 @@ const App: React.FC = () => {
                 </Route>
                 <Route exact path='/profile'>
                     <ProfilePage />
+                </Route>
+                <Route exact path='/profile/edit'>
+                    <EditProfilePage />
                 </Route>
                 <Route exact path='/admin'>
                     <AdminPage />
