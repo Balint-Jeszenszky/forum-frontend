@@ -34,6 +34,9 @@ const EditProfilePage: React.FC = () => {
             .then(res => {
                 localStorage.removeItem('userCtx');
                 history.push('/logout');
+            })
+            .catch(err => {
+                setError(err.response.data);
             });
         }
     }

@@ -7,11 +7,12 @@ import { UserContext } from '../common/UserContext';
 const CategoryManager: React.FC = () => {
     const [load, setLoad] = useState<LoadingState>(LoadingState.START);
     const [categories, setCategories] = useState<Category[]>([]);
-    const [added, setAdded] = useState<boolean>(false);
     const [editing, setEditing] = useState<boolean>(false);
     const [newCategoryName, setNewCategoryName] = useState<string>('');
     const [editCategoryName, setEditCategoryName] = useState<string>('');
     const [selectedCategoryId, setSelectedCategoryId] = useState<number>(-1);
+    const [error, setError] = useState<string>('');
+    const [saved, setSaved] = useState<string>('');
     const userCtx = useContext(UserContext);
 
     if (load === LoadingState.START) {
@@ -26,9 +27,14 @@ const CategoryManager: React.FC = () => {
         if (newCategoryName) {
             service.postCategory({name: newCategoryName}, userCtx)
             .then(res => {
-                setAdded(true);
                 setCategories([res.data, ...categories]);
-                setTimeout(() => setAdded(false), 3000);
+                setSaved('Category added');
+                setError('');
+                setNewCategoryName('');
+            })
+            .catch(err => {
+                setError(err.response.data);
+                setSaved('');
             });
         }
     }
@@ -48,6 +54,8 @@ const CategoryManager: React.FC = () => {
             .then(res => {
                 setCategories(categories.filter(e => e.id !== selectedCategoryId));
                 setSelectedCategoryId(-1);
+                setSaved('Category deleted');
+                setError('');
             });
         }
     }
@@ -66,15 +74,28 @@ const CategoryManager: React.FC = () => {
                 setEditing(false);
                 categories[categories.findIndex(c => c.id === selectedCategoryId)].name = editCategoryName;
                 setCategories([...categories]);
+                setSaved('Category updated');
+                setError('');
+            })
+            .catch(err => {
+                setError(err.response.data);
+                setSaved('');
             });
         }
     }
 
     return (
         <form className='form-inline' onSubmit={e => {e.preventDefault(); return false;}}>
+            {error && <div className="alert alert-danger w-100" role="alert">
+                {error}
+            </div>}
+            {saved && <div className="alert alert-success w-100" role="alert">
+                {saved}
+            </div>}
+
             <div className="w-100 mb-2">
                 <input className="form-control w-50" placeholder='Name' value={newCategoryName} onChange={e => setNewCategoryName(e.target.value)} />
-                <button className={`btn ${added ? 'btn-success' : 'btn-primary'} ml-2`} type='button' onClick={onAdd} disabled={newCategoryName === ''}>Add</button><br />
+                <button className='btn btn-primary ml-2' type='button' onClick={onAdd} disabled={newCategoryName === ''}>Add</button><br />
             </div>
 
             <div className="w-100">

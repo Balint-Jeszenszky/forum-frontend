@@ -8,6 +8,7 @@ const UserManager: React.FC = () => {
     const [load, setLoad] = useState<LoadingState>(LoadingState.START);
     const [users, setUsers] = useState<User[]>([]);
     const [selectedUserId, setSelectedUserId] = useState<number>(-1);
+    const [deleted, setDeleted] = useState<boolean>(false);
     const userCtx = useContext(UserContext);
 
     if (load === LoadingState.START) {
@@ -15,7 +16,6 @@ const UserManager: React.FC = () => {
         service.getAllUsers(userCtx)
         .then(res => {
             setUsers(res.data.filter((e: User) => !e.roles?.find(e => e.name === 'ROLE_ADMIN')));
-            console.log(res.data);
         });
     }
 
@@ -29,12 +29,17 @@ const UserManager: React.FC = () => {
             .then(res => {
                 setUsers(users.filter(e => e.id !== selectedUserId));
                 setSelectedUserId(-1);
+                setDeleted(true);
             });
         }
     }
 
     return (
         <form className='form-inline' onSubmit={e => {e.preventDefault(); return false;}}>
+            {deleted && <div className="alert alert-success w-100" role="alert">
+                User deleted;
+            </div>}
+
             <div className="w-100">
                 <select className='form-control w-50' onChange={selectUser}>
                     <option value={-1}>Choose...</option>
