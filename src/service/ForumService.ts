@@ -5,7 +5,7 @@ import { EditUser, Login, User } from '../models/User';
 import { Answer, NewAnswer } from '../models/Answer';
 
 class ForumService {
-    baseUrl = 'http://192.168.0.2:8080/api';
+    baseUrl = '/api';
 
     private getHeader(userCtx: Login) {
         return {
@@ -16,7 +16,7 @@ class ForumService {
     }
 
     getAnswersByQuestionId(id: number) {
-        return axios.get(`${this.baseUrl}/answers/${id}`);
+        return axios.get(`${this.baseUrl}/answers/question/${id}`);
     }
 
     getAnswerById(id: number, userCtx: Login) {
